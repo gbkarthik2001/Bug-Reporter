@@ -1,0 +1,48 @@
+.bug-reporter-fab {
+	position: fixed;
+	right: 20px;
+	bottom: 20px;
+	z-index: 1050;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 10px 14px;
+	border: none;
+	border-radius: 999px;
+	background: var(--bg-color, #2b2c30);
+	color: var(--text-color, #fff);
+	box-shadow: var(--shadow-md, 0 2px 8px rgba(0, 0, 0, 0.25));
+	cursor: pointer;
+	font-size: var(--text-sm, 12px);
+	font-weight: 500;
+	opacity: 0.9;
+	transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.bug-reporter-fab:hover {
+	opacity: 1;
+	transform: translateY(-1px);
+}
+
+.bug-reporter-fab:focus-visible {
+	outline: 2px solid var(--primary-color, #2490ef);
+	outline-offset: 2px;
+}
+
+.bug-reporter-fab-label {
+	white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+	.bug-reporter-fab-label {
+		display: none;
+	}
+	.bug-reporter-fab {
+		padding: 12px;
+		border-radius: 50%;
+	}
+}
+
+.bug-reporter-context-preview {
+	margin: 0 0 8px 0;
+}

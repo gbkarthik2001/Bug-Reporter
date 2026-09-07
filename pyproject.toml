@@ -1,0 +1,16 @@
+[build-system]
+requires = ["flit_core >=3.4,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "bug_reporter"
+authors = [
+    { name = "Your Organization", email = "support@example.com" }
+]
+description = "In-app bug reporting with automatic technical context capture for Frappe/ERPNext (v15 & v16)"
+requires-python = ">=3.10"
+readme = "README.md"
+dynamic = ["version"]
+dependencies = []
+
+[tool.bench.dev-dependencies]

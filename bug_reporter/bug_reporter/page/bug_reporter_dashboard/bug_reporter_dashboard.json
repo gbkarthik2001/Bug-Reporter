@@ -1,0 +1,21 @@
+{
+ "content": null,
+ "creation": "2026-01-01 00:00:00",
+ "docstatus": 0,
+ "doctype": "Page",
+ "icon": "small-file",
+ "idx": 0,
+ "module": "Bug Reporter",
+ "name": "bug-reporter-dashboard",
+ "modified": "2026-01-01 00:00:00",
+ "modified_by": "Administrator",
+ "owner": "Administrator",
+ "page_name": "bug-reporter-dashboard",
+ "roles": [
+  { "role": "System Manager" },
+  { "role": "Bug Reporter Manager" }
+ ],
+ "standard": "Yes",
+ "system_page": 0,
+ "title": "Bug Reporter Dashboard"
+}

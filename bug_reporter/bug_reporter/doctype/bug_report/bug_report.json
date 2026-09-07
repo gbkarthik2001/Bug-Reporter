@@ -1,0 +1,376 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 0,
+ "autoname": "naming_series:",
+ "creation": "2026-01-01 00:00:00",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "title",
+  "status_section",
+  "status",
+  "severity",
+  "priority",
+  "column_break_status",
+  "reported_by",
+  "reported_at",
+  "auto_captured",
+  "assigned_to",
+  "description_section",
+  "description",
+  "expected_result",
+  "actual_result",
+  "steps_to_reproduce",
+  "evidence_section",
+  "screenshot",
+  "column_break_evidence",
+  "attachment_note",
+  "technical_section",
+  "route",
+  "reference_doctype",
+  "reference_name",
+  "column_break_technical",
+  "company",
+  "browser",
+  "operating_system",
+  "user_agent",
+  "correlation_id",
+  "error_section",
+  "error_message",
+  "error_log",
+  "error_log_candidates",
+  "client_errors",
+  "failed_requests",
+  "installed_apps",
+  "resolution_section",
+  "resolution",
+  "developer_notes",
+  "redmine_section",
+  "redmine_issue_id",
+  "redmine_issue_url"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "BUG-.#####",
+   "reqd": 1,
+   "set_only_once": 1
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Title",
+   "reqd": 1
+  },
+  {
+   "fieldname": "status_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "default": "Pending",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Pending\nResolved\nReopened\nRejected",
+   "reqd": 1
+  },
+  {
+   "description": "No field-level default here on purpose - Bug Report.before_insert fills this from Bug Reporter Settings' Default Severity when left blank, so that setting is the single source of truth.",
+   "fieldname": "severity",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Severity",
+   "options": "Critical\nHigh\nMedium\nLow",
+   "reqd": 1
+  },
+  {
+   "description": "No field-level default here on purpose - Bug Report.before_insert fills this from Bug Reporter Settings' Default Priority when left blank, so that setting is the single source of truth.",
+   "fieldname": "priority",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Priority",
+   "options": "Urgent\nHigh\nMedium\nLow",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_status",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "reported_by",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Reported By",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "reported_at",
+   "fieldtype": "Datetime",
+   "label": "Reported At",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "description": "Created automatically (unhandled server error or browser console error) rather than via the Report Bug button.",
+   "fieldname": "auto_captured",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Auto-captured",
+   "read_only": 1
+  },
+  {
+   "fieldname": "assigned_to",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Assigned To",
+   "options": "User"
+  },
+  {
+   "fieldname": "description_section",
+   "fieldtype": "Section Break",
+   "label": "Details"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text Editor",
+   "label": "Description",
+   "reqd": 1
+  },
+  {
+   "fieldname": "expected_result",
+   "fieldtype": "Small Text",
+   "label": "Expected Result"
+  },
+  {
+   "fieldname": "actual_result",
+   "fieldtype": "Small Text",
+   "label": "Actual Result"
+  },
+  {
+   "fieldname": "steps_to_reproduce",
+   "fieldtype": "Text Editor",
+   "label": "Steps to Reproduce"
+  },
+  {
+   "fieldname": "evidence_section",
+   "fieldtype": "Section Break",
+   "label": "Evidence"
+  },
+  {
+   "fieldname": "screenshot",
+   "fieldtype": "Attach Image",
+   "label": "Screenshot"
+  },
+  {
+   "fieldname": "column_break_evidence",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "attachment_note",
+   "fieldtype": "HTML",
+   "options": "<p class='text-muted small'>Use the standard attachment icon (paperclip, top right) to attach additional files or logs.</p>"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "technical_section",
+   "fieldtype": "Section Break",
+   "label": "Technical Details (automatically captured)"
+  },
+  {
+   "fieldname": "route",
+   "fieldtype": "Data",
+   "label": "Route",
+   "read_only": 1
+  },
+  {
+   "fieldname": "reference_doctype",
+   "fieldtype": "Link",
+   "label": "DocType",
+   "options": "DocType",
+   "read_only": 1
+  },
+  {
+   "fieldname": "reference_name",
+   "fieldtype": "Dynamic Link",
+   "label": "Document Name",
+   "options": "reference_doctype",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_technical",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Data",
+   "label": "Company",
+   "read_only": 1
+  },
+  {
+   "fieldname": "browser",
+   "fieldtype": "Data",
+   "label": "Browser",
+   "read_only": 1
+  },
+  {
+   "fieldname": "operating_system",
+   "fieldtype": "Data",
+   "label": "Operating System",
+   "read_only": 1
+  },
+  {
+   "fieldname": "user_agent",
+   "fieldtype": "Small Text",
+   "hidden": 1,
+   "label": "User Agent (raw)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "correlation_id",
+   "fieldtype": "Data",
+   "label": "Correlation ID",
+   "read_only": 1,
+   "unique": 0
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "error_section",
+   "fieldtype": "Section Break",
+   "label": "Error Capture"
+  },
+  {
+   "fieldname": "error_message",
+   "fieldtype": "Small Text",
+   "label": "Error Message"
+  },
+  {
+   "fieldname": "error_log",
+   "fieldtype": "Link",
+   "label": "Related Error Log",
+   "options": "Error Log"
+  },
+  {
+   "fieldname": "error_log_candidates",
+   "fieldtype": "Small Text",
+   "label": "Other Candidate Error Logs (by time proximity)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "client_errors",
+   "fieldtype": "Code",
+   "label": "Client-side Errors (JSON)",
+   "options": "JSON",
+   "read_only": 1
+  },
+  {
+   "fieldname": "failed_requests",
+   "fieldtype": "Code",
+   "label": "Failed Requests (JSON)",
+   "options": "JSON",
+   "read_only": 1
+  },
+  {
+   "fieldname": "installed_apps",
+   "fieldtype": "Small Text",
+   "label": "Installed Apps",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "resolution_section",
+   "fieldtype": "Section Break",
+   "label": "Resolution"
+  },
+  {
+   "fieldname": "resolution",
+   "fieldtype": "Text Editor",
+   "label": "Resolution / Fix Notes"
+  },
+  {
+   "fieldname": "developer_notes",
+   "fieldtype": "Text Editor",
+   "label": "Developer Notes"
+  },
+  {
+   "collapsible": 1,
+   "depends_on": "eval:doc.redmine_issue_id",
+   "fieldname": "redmine_section",
+   "fieldtype": "Section Break",
+   "label": "Redmine"
+  },
+  {
+   "fieldname": "redmine_issue_id",
+   "fieldtype": "Data",
+   "label": "Redmine Issue ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "redmine_issue_url",
+   "fieldtype": "Data",
+   "label": "Redmine Issue URL",
+   "options": "URL",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-01-01 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Bug Reporter",
+ "name": "Bug Report",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Bug Reporter Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "if_owner": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Bug Reporter Tester",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "title",
+ "track_changes": 1
+}

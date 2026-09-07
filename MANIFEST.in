@@ -1,0 +1,11 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+recursive-include bug_reporter *.json
+recursive-include bug_reporter *.md
+recursive-include bug_reporter *.py
+recursive-include bug_reporter *.js
+recursive-include bug_reporter *.css
+recursive-include bug_reporter *.html
+recursive-exclude bug_reporter *.pyc

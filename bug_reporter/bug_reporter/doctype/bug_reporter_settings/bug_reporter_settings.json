@@ -1,0 +1,292 @@
+{
+ "actions": [],
+ "creation": "2026-01-01 00:00:00",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "enabled",
+  "column_break_1",
+  "auto_create_issue",
+  "access_section",
+  "allowed_roles",
+  "column_break_access",
+  "default_assignee",
+  "default_severity",
+  "default_priority",
+  "capture_section",
+  "enable_client_error_capture",
+  "enable_error_log_association",
+  "column_break_capture",
+  "error_log_correlation_window_minutes",
+  "auto_capture_section",
+  "enable_auto_server_capture",
+  "enable_auto_client_capture",
+  "column_break_auto_capture",
+  "auto_capture_dedup_window_minutes",
+  "attachment_section",
+  "retention_days",
+  "notification_section",
+  "notification_recipients",
+  "notify_tester_on_close",
+  "redmine_section",
+  "enable_redmine_sync",
+  "redmine_url",
+  "redmine_project_identifier",
+  "column_break_redmine",
+  "redmine_api_key",
+  "redmine_tracker_id",
+  "redmine_default_assignee_id",
+  "column_break_redmine_2",
+  "redmine_required_custom_field_id",
+  "redmine_required_custom_field_value",
+  "redmine_resolved_status_name"
+ ],
+ "fields": [
+  {
+   "default": "1",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enable Report Bug Button"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "auto_create_issue",
+   "fieldtype": "Check",
+   "label": "Automatically Create Linked Issue"
+  },
+  {
+   "fieldname": "access_section",
+   "fieldtype": "Section Break",
+   "label": "Access"
+  },
+  {
+   "description": "Roles allowed to submit bug reports. If empty, defaults to 'Bug Reporter Tester', 'Bug Reporter Manager', and 'System Manager'.",
+   "fieldname": "allowed_roles",
+   "fieldtype": "Table",
+   "label": "Allowed Roles",
+   "options": "Bug Reporter Allowed Role"
+  },
+  {
+   "fieldname": "column_break_access",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "default_assignee",
+   "fieldtype": "Link",
+   "label": "Default Assignee",
+   "options": "User"
+  },
+  {
+   "default": "Medium",
+   "description": "Options mirror Bug Report's own Severity field - kept in sync automatically (bug_reporter_settings.js), not duplicated here.",
+   "fieldname": "default_severity",
+   "fieldtype": "Select",
+   "label": "Default Severity"
+  },
+  {
+   "default": "Medium",
+   "description": "Options mirror Bug Report's own Priority field - kept in sync automatically (bug_reporter_settings.js), not duplicated here.",
+   "fieldname": "default_priority",
+   "fieldtype": "Select",
+   "label": "Default Priority"
+  },
+  {
+   "fieldname": "capture_section",
+   "fieldtype": "Section Break",
+   "label": "Capture"
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_client_error_capture",
+   "fieldtype": "Check",
+   "label": "Enable Client-side Error Capture"
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_error_log_association",
+   "fieldtype": "Check",
+   "label": "Enable Error Log Association"
+  },
+  {
+   "fieldname": "column_break_capture",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "10",
+   "fieldname": "error_log_correlation_window_minutes",
+   "fieldtype": "Int",
+   "label": "Error Log Correlation Window (minutes)"
+  },
+  {
+   "fieldname": "auto_capture_section",
+   "fieldtype": "Section Break",
+   "label": "Automatic Capture (no click required)"
+  },
+  {
+   "default": "1",
+   "description": "Whenever a request crashes with an unhandled server exception (HTTP 500), automatically create a Bug Report and notify the recipients below - independent of anyone clicking \"Report Bug\". Does not fire for routine validation/permission errors, since those never reach Frappe's own Error Log.",
+   "fieldname": "enable_auto_server_capture",
+   "fieldtype": "Check",
+   "label": "Auto-capture Unhandled Server Errors"
+  },
+  {
+   "default": "1",
+   "description": "Automatically create a Bug Report whenever a logged-in user's browser hits an uncaught JS error or unhandled promise rejection, without them clicking \"Report Bug\".",
+   "fieldname": "enable_auto_client_capture",
+   "fieldtype": "Check",
+   "label": "Auto-capture Browser Console Errors"
+  },
+  {
+   "fieldname": "column_break_auto_capture",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "30",
+   "description": "If the same error recurs within this many minutes, it is not reported again as a new Bug Report / email - prevents a repeating error from flooding the developer's inbox.",
+   "fieldname": "auto_capture_dedup_window_minutes",
+   "fieldtype": "Int",
+   "label": "Duplicate Suppression Window (minutes)"
+  },
+  {
+   "fieldname": "attachment_section",
+   "fieldtype": "Section Break",
+   "label": "Attachments"
+  },
+  {
+   "default": "0",
+   "description": "Delete Screenshot/attachment files from closed or rejected Bug Reports after this many days. 0 = keep forever.",
+   "fieldname": "retention_days",
+   "fieldtype": "Int",
+   "label": "Evidence Retention (days, 0 = keep forever)"
+  },
+  {
+   "fieldname": "notification_section",
+   "fieldtype": "Section Break",
+   "label": "Notifications"
+  },
+  {
+   "description": "Users notified whenever a new Bug Report is submitted, in addition to the assignee.",
+   "fieldname": "notification_recipients",
+   "fieldtype": "Table",
+   "label": "Notification Recipients",
+   "options": "Bug Reporter Notification Recipient"
+  },
+  {
+   "default": "1",
+   "fieldname": "notify_tester_on_close",
+   "fieldtype": "Check",
+   "label": "Notify Reporter When Resolved"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "redmine_section",
+   "fieldtype": "Section Break",
+   "label": "Redmine Integration"
+  },
+  {
+   "default": "0",
+   "description": "Every new Bug Report (manual or automatic) also creates a matching Redmine issue, assigned to the Redmine user whose email matches the Bug Report's Assigned To. Never blocks Bug Report creation itself if Redmine is unreachable or misconfigured.",
+   "fieldname": "enable_redmine_sync",
+   "fieldtype": "Check",
+   "label": "Sync Bug Reports to Redmine"
+  },
+  {
+   "depends_on": "eval:doc.enable_redmine_sync",
+   "description": "Base URL of your Redmine instance, e.g. https://redmine.example.com (no trailing slash).",
+   "fieldname": "redmine_url",
+   "fieldtype": "Data",
+   "label": "Redmine URL"
+  },
+  {
+   "depends_on": "eval:doc.enable_redmine_sync",
+   "description": "The short slug from the project's URL (Project Settings → Identifier), not its display name.",
+   "fieldname": "redmine_project_identifier",
+   "fieldtype": "Data",
+   "label": "Redmine Project Identifier"
+  },
+  {
+   "fieldname": "column_break_redmine",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.enable_redmine_sync",
+   "description": "Redmine → My Account → API access key. Must belong to a member of the target project - assignee-by-email matching looks up the project's own member list, so no admin-level key is required.",
+   "fieldname": "redmine_api_key",
+   "fieldtype": "Password",
+   "label": "Redmine API Key"
+  },
+  {
+   "default": "1",
+   "depends_on": "eval:doc.enable_redmine_sync",
+   "description": "Numeric tracker ID to file issues under - check Redmine → Administration → Trackers for the exact ID on your instance (a stock install usually has 1 = Bug).",
+   "fieldname": "redmine_tracker_id",
+   "fieldtype": "Int",
+   "label": "Redmine Tracker ID"
+  },
+  {
+   "depends_on": "eval:doc.enable_redmine_sync",
+   "description": "Used when the Bug Report's Assigned To user's email doesn't match any Redmine user, or when Assigned To is blank. Leave at 0 to create the issue unassigned in that case.",
+   "fieldname": "redmine_default_assignee_id",
+   "fieldtype": "Int",
+   "label": "Fallback Redmine Assignee (User ID)"
+  },
+  {
+   "fieldname": "column_break_redmine_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.enable_redmine_sync",
+   "description": "Only needed if your Redmine project has a REQUIRED custom field on issues (distinct from Redmine's native, per-project Issue Category feature - check by opening Redmine's New Issue form for this project: if a required field appears that isn't in Administration → Trackers/Fields as a built-in, it's a custom field). Find its numeric ID by opening any existing issue in that project via the API, e.g. {Redmine URL}/issues/&lt;id&gt;.json, and reading the \"id\" under custom_fields for the field with the matching name. Leave at 0 if the project has no such required field.",
+   "fieldname": "redmine_required_custom_field_id",
+   "fieldtype": "Int",
+   "label": "Required Custom Field ID"
+  },
+  {
+   "depends_on": "eval:doc.enable_redmine_sync && doc.redmine_required_custom_field_id",
+   "description": "The exact value to send for that custom field on every synced issue (must match one of its allowed options exactly, e.g. \"Non Billable - Bug Fixes\").",
+   "fieldname": "redmine_required_custom_field_value",
+   "fieldtype": "Data",
+   "label": "Required Custom Field Value"
+  },
+  {
+   "default": "Deployed to UAT",
+   "depends_on": "eval:doc.enable_redmine_sync",
+   "description": "Checked periodically (see scheduler). When a synced issue's Redmine status exactly matches this name, its linked Bug Report here is automatically moved to Resolved - only applies to reports currently Pending or Reopened, and only moves them forward to Resolved (never touches Rejected reports, never moves anything backward). Must match a real status name in Redmine exactly, e.g. \"Deployed to UAT\".",
+   "fieldname": "redmine_resolved_status_name",
+   "fieldtype": "Data",
+   "label": "Redmine Status That Marks Resolved"
+  }
+ ],
+ "issingle": 1,
+ "modified": "2026-01-01 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Bug Reporter",
+ "name": "Bug Reporter Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Bug Reporter Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}
