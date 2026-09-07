@@ -74,21 +74,19 @@ def _capture_server_error(doc):
 	# failing request's own URL out of the traceback text. Still prefer
 	# doc.reference_doctype/doc.reference_name where some other code path
 	# *did* set them explicitly (e.g. a direct frappe.log_error(...,
-	# reference_doctype=...) call elsewhere in the codebase). Computed
-	# before the dedup check (not after, as before) so the signature below
-	# can be scoped per-record, not just per-error-message.
+	# reference_doctype=...) call elsewhere in the codebase).
 	route, inferred_doctype, inferred_name = extract_context_from_traceback(traceback_text)
 	reference_doctype = doc.reference_doctype or inferred_doctype
 	reference_name = (doc.reference_name or inferred_name) if reference_doctype else None
 
 	title_source = doc.method or "Unhandled Server Error"
-	# Scoped to the specific record when one is known (e.g. "same method
-	# failing again on the very same EOI Form" is a duplicate; the same
-	# method failing on a *different* EOI Form is a distinct, real
-	# occurrence and must still get its own report) - falls back to the
-	# method name alone when no record could be identified.
-	signature_key = f"{title_source}|{reference_doctype}:{reference_name}" if reference_doctype else title_source
-	signature = build_auto_capture_signature("server", signature_key)
+	# Deliberately NOT scoped per-document: the same underlying bug hitting
+	# N different records in one bulk operation (e.g. a script creating 10
+	# records via API, 8 failing with the identical error) is one bug, and
+	# should produce exactly one Bug Report / one email, not one per
+	# affected record. A genuinely different error still gets its own
+	# report regardless of which record it happened on.
+	signature = build_auto_capture_signature("server", title_source)
 	if was_recently_auto_captured(signature, settings.get("auto_capture_dedup_window_minutes")):
 		return
 

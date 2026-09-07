@@ -136,13 +136,11 @@ def report_client_error(payload):
 	reference_doctype = _safe_doctype(data.get("reference_doctype"))
 	reference_name = data.get("reference_name") if reference_doctype else None
 
-	# Scoped to the specific record when one is known - the same JS error
-	# recurring on the very same document is a duplicate; the same error
-	# on a *different* document is a distinct, real occurrence and must
-	# still get its own report (matches the same-record dedup scoping in
-	# auto_capture.py's server-side path).
-	signature_key = f"{message}|{reference_doctype}:{reference_name}" if reference_doctype else message
-	signature = build_auto_capture_signature("client", signature_key)
+	# Deliberately NOT scoped per-document: the same underlying JS bug
+	# hitting many different records/pages is one bug, and should produce
+	# exactly one Bug Report / one email, not one per affected record (see
+	# the matching note in auto_capture.py's server-side path).
+	signature = build_auto_capture_signature("client", message)
 	if was_recently_auto_captured(signature, settings.get("auto_capture_dedup_window_minutes")):
 		return {"captured": False, "reason": "duplicate"}
 
