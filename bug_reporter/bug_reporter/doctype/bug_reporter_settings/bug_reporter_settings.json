@@ -240,14 +240,14 @@
   },
   {
    "depends_on": "eval:doc.enable_redmine_sync",
-   "description": "Only needed if your Redmine project has a REQUIRED custom field on issues (distinct from Redmine's native, per-project Issue Category feature - check by opening Redmine's New Issue form for this project: if a required field appears that isn't in Administration → Trackers/Fields as a built-in, it's a custom field). Find its numeric ID by opening any existing issue in that project via the API, e.g. {Redmine URL}/issues/&lt;id&gt;.json, and reading the \"id\" under custom_fields for the field with the matching name. Leave at 0 if the project has no such required field.",
+   "description": "Identifies WHICH custom field to fill in, when your Redmine project has one marked required on every issue (distinct from Redmine's own native, per-project Issue Category feature - check by opening Redmine's New Issue form for this project: if a required field appears that isn't listed under Administration → Trackers/Fields as a built-in, it's a custom field). Sent as the \"id\" inside the issue's custom_fields payload on every create/update - if a project has such a required field and this is left at 0, Redmine rejects the sync with an error like \"<field name> cannot be blank\". Find the correct numeric ID by opening any existing issue in that project via the API, e.g. {Redmine URL}/issues/&lt;id&gt;.json, and reading the \"id\" under custom_fields for the field with the matching name. Leave at 0 if the project has no such required field.",
    "fieldname": "redmine_required_custom_field_id",
    "fieldtype": "Int",
    "label": "Required Custom Field ID"
   },
   {
    "depends_on": "eval:doc.enable_redmine_sync && doc.redmine_required_custom_field_id",
-   "description": "The exact value to send for that custom field on every synced issue (must match one of its allowed options exactly, e.g. \"Non Billable - Bug Fixes\").",
+   "description": "The actual VALUE written into that required custom field, on every synced issue (create and update alike) - paired with Required Custom Field ID above as {\"id\": ..., \"value\": ...} in the sync payload. Must match one of that field's allowed dropdown options in Redmine exactly, character for character (e.g. \"Non Billable - Bug Fixes\") - a value that isn't one of its valid options gets rejected by Redmine the same way leaving it blank does.",
    "fieldname": "redmine_required_custom_field_value",
    "fieldtype": "Data",
    "label": "Required Custom Field Value"
