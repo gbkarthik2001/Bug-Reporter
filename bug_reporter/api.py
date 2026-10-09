@@ -17,6 +17,7 @@ from frappe.utils import cint
 from bug_reporter.utils import (
 	build_auto_capture_signature,
 	get_settings,
+	is_bug_reporter_enabled,
 	log_client_error_to_error_log,
 	parse_user_agent,
 	safe_json_loads,
@@ -118,6 +119,9 @@ def report_client_error(payload):
 	requires a logged-in session (not allow_guest) and is rate-limited, since
 	unlike the manual dialog this fires with zero human judgement in front of
 	it and a broken page could otherwise call it in a tight loop."""
+	if not is_bug_reporter_enabled():
+		return {"captured": False}
+
 	settings = get_settings()
 	if not cint(settings.get("enable_auto_client_capture", 1)):
 		return {"captured": False}

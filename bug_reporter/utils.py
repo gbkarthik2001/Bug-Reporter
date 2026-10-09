@@ -85,15 +85,21 @@ def get_allowed_roles():
 	return roles
 
 
+def is_bug_reporter_enabled():
+	"""Master kill-switch: when Bug Reporter Settings.enabled is off, every
+	piece of this app's functionality (capture, manual submission, Redmine
+	sync, scheduled jobs) must no-op - not just the Report Bug button."""
+	return bool(cint(get_settings().get("enabled")))
+
+
 def user_can_submit(user=None):
 	user = user or frappe.session.user
 	if user == "Guest":
 		return False
+	if not is_bug_reporter_enabled():
+		return False
 	if "System Manager" in frappe.get_roles(user):
 		return True
-	settings = get_settings()
-	if not cint(settings.get("enabled")):
-		return False
 	allowed = get_allowed_roles()
 	user_roles = set(frappe.get_roles(user))
 	return bool(allowed & user_roles)

@@ -4,18 +4,14 @@
 import frappe
 from frappe.utils import add_to_date, now_datetime
 
-from bug_reporter.utils import get_settings
+from bug_reporter.utils import get_settings, is_bug_reporter_enabled
 
 
 def cleanup_old_evidence():
-	"""Daily scheduled job (see hooks.scheduler_events). Deletes attached
-	files (screenshots/attachments) from Bug Reports that have been in a
-	terminal state (Resolved / Rejected) for longer than the configured
-	retention window. The Bug Report record itself is kept for audit
-	history - only the file evidence is removed.
+	"""Daily job: deletes evidence files from old Resolved/Rejected Bug Reports, keeping the record itself."""
+	if not is_bug_reporter_enabled():
+		return
 
-	No-ops entirely when retention_days is 0 (default = keep forever).
-	"""
 	settings = get_settings()
 	retention_days = frappe.utils.cint(settings.get("retention_days"))
 	if retention_days <= 0:
@@ -42,11 +38,10 @@ def cleanup_old_evidence():
 
 
 def send_weekly_pending_summary():
-	"""Weekly scheduled job (see hooks.scheduler_events). Emails the
-	configured recipients a list of every Bug Report still open (Pending
-	or Reopened), so nothing quietly falls through the cracks between the
-	individual new-bug/resolved emails. Skipped entirely when nothing is
-	open - an empty reminder isn't useful."""
+	"""Weekly job: emails a digest of every still-open Bug Report, skipped when none are open."""
+	if not is_bug_reporter_enabled():
+		return
+
 	pending = frappe.get_all(
 		"Bug Report",
 		filters={"status": ["in", ["Pending", "Reopened"]]},
