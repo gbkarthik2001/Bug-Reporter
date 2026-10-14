@@ -20,6 +20,19 @@
 	window.__bug_reporter_errors = window.__bug_reporter_errors || [];
 	window.__bug_reporter_failed_requests = window.__bug_reporter_failed_requests || [];
 
+	if (window.frappe && typeof frappe.throw === "function" && !frappe.throw.__bug_reporter_patched) {
+		var originalFrappeThrow = frappe.throw;
+		frappe.throw = function () {
+			try {
+				originalFrappeThrow.apply(this, arguments);
+			} catch (err) {
+				if (err && typeof err === "object") err.__bug_reporter_expected = true;
+				throw err;
+			}
+		};
+		frappe.throw.__bug_reporter_patched = true;
+	}
+
 	function pushCapped(arr, item, max) {
 		arr.push(item);
 		if (arr.length > max) arr.shift();
@@ -128,6 +141,8 @@
 	window.addEventListener("unhandledrejection", function (event) {
 		try {
 			var reason = event.reason;
+			if (reason && reason.__bug_reporter_expected) return;
+
 			var message = ("Unhandled promise rejection: " + (reason && reason.message ? reason.message : String(reason))).slice(
 				0,
 				500
