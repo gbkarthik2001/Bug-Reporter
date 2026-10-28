@@ -39,7 +39,8 @@
   "column_break_redmine_2",
   "redmine_required_custom_field_id",
   "redmine_required_custom_field_value",
-  "redmine_resolved_status_name"
+  "redmine_status_mapping_section",
+  "redmine_status_mapping"
  ],
  "fields": [
   {
@@ -253,12 +254,18 @@
    "label": "Required Custom Field Value"
   },
   {
-   "default": "Deployed to UAT",
+   "collapsible": 1,
    "depends_on": "eval:doc.enable_redmine_sync",
-   "description": "Checked periodically (see scheduler). When a synced issue's Redmine status exactly matches this name, its linked Bug Report here is automatically moved to Resolved - only applies to reports currently Pending or Reopened, and only moves them forward to Resolved (never touches Rejected reports, never moves anything backward). Must match a real status name in Redmine exactly, e.g. \"Deployed to UAT\".",
-   "fieldname": "redmine_resolved_status_name",
-   "fieldtype": "Data",
-   "label": "Redmine Status That Marks Resolved"
+   "fieldname": "redmine_status_mapping_section",
+   "fieldtype": "Section Break",
+   "label": "Redmine Status Mapping"
+  },
+  {
+   "description": "Checked periodically (see scheduler). Maps each Redmine issue status to the Bug Report status it should set here - fully bidirectional, can move a report into or out of Resolved/Rejected. Add one row per Redmine status that should drive a transition; leave unmapped statuses out to have no effect.",
+   "fieldname": "redmine_status_mapping",
+   "fieldtype": "Table",
+   "label": "Redmine Status & Bug Report Status Map",
+   "options": "Bug Reporter Redmine Status Mapping"
   }
  ],
  "issingle": 1,

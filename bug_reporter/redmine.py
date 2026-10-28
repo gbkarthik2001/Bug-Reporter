@@ -41,6 +41,11 @@ def get_redmine_config():
 	if not (url and project and api_key):
 		return {}
 
+	status_by_name = {}
+	for row in settings.get("redmine_status_mapping") or []:
+		if row.get("redmine_status_name"):
+			status_by_name[row.get("redmine_status_name").strip().lower()] = row.get("bug_report_status")
+
 	return {
 		"url": url,
 		"api_key": api_key,
@@ -49,7 +54,7 @@ def get_redmine_config():
 		"default_assignee_id": cint(settings.get("redmine_default_assignee_id")) or None,
 		"required_custom_field_id": cint(settings.get("redmine_required_custom_field_id")) or None,
 		"required_custom_field_value": settings.get("redmine_required_custom_field_value"),
-		"resolved_status_name": settings.get("redmine_resolved_status_name"),
+		"status_by_name": status_by_name,
 	}
 
 
@@ -66,13 +71,20 @@ def _create(bug_report_name):
 	if not config:
 		return
 
-	doc = frappe.get_doc("Bug Report", bug_report_name)
-	if doc.get("redmine_issue_id"):
-		return  # already synced - defensive, after_insert should only fire once
+	current_issue_id = frappe.db.get_value("Bug Report", bug_report_name, "redmine_issue_id", for_update=True)
+	if current_issue_id:
+		frappe.db.rollback()  # nothing to write, just release the lock
+		return
 
-	payload = _build_issue_payload(doc, config, include_project_and_tracker=True)
-	issue_id = _create_issue(config, payload)
+	doc = frappe.get_doc("Bug Report", bug_report_name)
+	try:
+		payload = _build_issue_payload(doc, config, include_project_and_tracker=True)
+		issue_id = _create_issue(config, payload)
+	except Exception:
+		frappe.db.rollback()
+		raise
 	if not issue_id:
+		frappe.db.rollback()
 		return
 
 	_save_redmine_link(bug_report_name, config, issue_id)
@@ -91,20 +103,34 @@ def manual_sync_to_redmine(bug_report_name):
 			title=_("Redmine Sync Not Configured"),
 		)
 
+	# Mirrors the lock in _create() - without it, clicking this button while the
+	# after_insert auto-sync job is still in flight lets both paths pass the
+	# "not yet synced" check and create two Redmine issues for the same report.
+	current_issue_id = frappe.db.get_value("Bug Report", bug_report_name, "redmine_issue_id", for_update=True)
 	doc = frappe.get_doc("Bug Report", bug_report_name)
 
-	if doc.get("redmine_issue_id"):
-		payload = _build_issue_payload(doc, config, include_project_and_tracker=False)
-		_update_issue(config, doc.redmine_issue_id, payload)
+	if current_issue_id:
+		try:
+			payload = _build_issue_payload(doc, config, include_project_and_tracker=False)
+			_update_issue(config, current_issue_id, payload)
+		except Exception:
+			frappe.db.rollback()
+			raise
+		frappe.db.commit()
 		return {
 			"created": False,
-			"issue_id": doc.redmine_issue_id,
+			"issue_id": current_issue_id,
 			"issue_url": doc.redmine_issue_url,
 		}
 
-	payload = _build_issue_payload(doc, config, include_project_and_tracker=True)
-	issue_id = _create_issue(config, payload)
+	try:
+		payload = _build_issue_payload(doc, config, include_project_and_tracker=True)
+		issue_id = _create_issue(config, payload)
+	except Exception:
+		frappe.db.rollback()
+		raise
 	if not issue_id:
+		frappe.db.rollback()
 		frappe.throw(_("Redmine did not return an issue ID for the new issue."))
 
 	issue_url = _save_redmine_link(bug_report_name, config, issue_id)
@@ -266,17 +292,16 @@ def _build_description(doc):
 
 
 def pull_status_updates():
-	"""Scheduled: moves open Bug Reports to Resolved when their linked Redmine issue hits the trigger status, one-way and forward-only."""
+	"""Scheduled: moves every synced Bug Report to whichever local status its linked Redmine
+	issue's current status maps to in the Redmine Status Mapping table - fully bidirectional,
+	any mapped status can move a report into or out of Resolved/Rejected."""
 	config = get_redmine_config()
-	if not config or not config.get("resolved_status_name"):
+	if not config or not config.get("status_by_name"):
 		return
 
 	candidates = frappe.get_all(
 		"Bug Report",
-		filters={
-			"redmine_issue_id": ["is", "set"],
-			"status": ["in", ["Pending", "Reopened"]],
-		},
+		filters={"redmine_issue_id": ["is", "set"]},
 		fields=["name", "redmine_issue_id"],
 	)
 	for row in candidates:
@@ -297,20 +322,21 @@ def _pull_status_for_one(bug_report_name, issue_id, config):
 		timeout=REQUEST_TIMEOUT,
 	)
 	response.raise_for_status()
-	status_name = ((response.json() or {}).get("issue") or {}).get("status", {}).get("name")
+	status_name = (((response.json() or {}).get("issue") or {}).get("status") or {}).get("name")
 
-	if status_name != config["resolved_status_name"]:
+	target_status = config["status_by_name"].get(status_name.strip().lower()) if status_name else None
+	if not target_status:
 		return
 
 	doc = frappe.get_doc("Bug Report", bug_report_name)
-	if doc.status not in ("Pending", "Reopened"):
-		return  # changed locally since the candidates query ran
+	if doc.status == target_status:
+		return
 
-	doc.status = "Resolved"
+	doc.status = target_status
 	doc.add_comment(
 		"Info",
-		_("Automatically marked Resolved - linked Redmine issue #{0} reached status \"{1}\".").format(
-			issue_id, status_name
+		_("Automatically marked {0} - linked Redmine issue #{1} reached status \"{2}\".").format(
+			target_status, issue_id, status_name
 		),
 	)
 	doc.save(ignore_permissions=True)

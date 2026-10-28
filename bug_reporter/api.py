@@ -8,6 +8,7 @@ tester from submitting a bug report (spec section 7 / 19).
 """
 
 import json
+import re
 
 import frappe
 from frappe import _
@@ -29,6 +30,9 @@ from bug_reporter.utils import (
 MAX_CLIENT_ERRORS = 20
 MAX_FAILED_REQUESTS = 20
 MAX_FIELD_LEN = 140
+
+
+IGNORED_CLIENT_ERROR_PATTERN = re.compile(r"cancelled\.?\s*$", re.IGNORECASE)
 
 
 @frappe.whitelist()
@@ -136,6 +140,9 @@ def report_client_error(payload):
 	message = (data.get("message") or "").strip()
 	if not message:
 		return {"captured": False}
+
+	if IGNORED_CLIENT_ERROR_PATTERN.search(message):
+		return {"captured": False, "reason": "ignored_pattern"}
 
 	reference_doctype = _safe_doctype(data.get("reference_doctype"))
 	reference_name = data.get("reference_name") if reference_doctype else None

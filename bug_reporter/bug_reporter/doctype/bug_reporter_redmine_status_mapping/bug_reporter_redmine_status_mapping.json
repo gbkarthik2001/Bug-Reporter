@@ -1,0 +1,37 @@
+{
+ "actions": [],
+ "creation": "2026-10-28 00:00:00",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "redmine_status_name",
+  "bug_report_status"
+ ],
+ "fields": [
+  {
+   "fieldname": "redmine_status_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Redmine Status Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "bug_report_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Bug Report Status",
+   "options": "Pending\nResolved\nReopened\nRejected",
+   "reqd": 1
+  }
+ ],
+ "istable": 1,
+ "modified": "2026-10-28 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Bug Reporter",
+ "name": "Bug Reporter Redmine Status Mapping",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

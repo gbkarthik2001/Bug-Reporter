@@ -17,6 +17,10 @@
 	var MAX_ERRORS = 20;
 	var MAX_REQUESTS = 20;
 
+	var IGNORED_MESSAGE_PATTERN = /cancelled\.?\s*$/i;
+
+	var EXTENSION_SOURCE_PATTERN = /^(chrome|moz|safari|ms-browser)-extension:/i;
+
 	window.__bug_reporter_errors = window.__bug_reporter_errors || [];
 	window.__bug_reporter_failed_requests = window.__bug_reporter_failed_requests || [];
 
@@ -96,6 +100,7 @@
 			var config = (f && f.boot && f.boot.bug_reporter) || {};
 			if (!config.enabled || !config.auto_client_capture_enabled) return;
 			if (!f || !f.session || f.session.user === "Guest") return;
+			if (IGNORED_MESSAGE_PATTERN.test(message)) return;
 			if (!shouldAutoReport(message)) return;
 
 			var payload = {
@@ -120,6 +125,8 @@
 
 	window.addEventListener("error", function (event) {
 		try {
+			if (event.filename && EXTENSION_SOURCE_PATTERN.test(event.filename)) return;
+
 			var message = (event.message || "Unknown error").slice(0, 500);
 			pushCapped(
 				window.__bug_reporter_errors,
